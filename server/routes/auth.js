@@ -15,15 +15,16 @@ router.post('/register', [
   body('phone').trim().isLength({ min: 10 }).withMessage('Please provide a valid phone number'),
 ], async (req, res) => {
   try {
-    const errors = validationResult(req);
+    const errors = validationResult(req);// Validate request body
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, password, phone, role, address } = req.body;
+    const { name, email, password, phone, role, address } = req.body;//get data from frontend whener user registers
+
 
     // Check if user already exists
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email }); // check if user already exists in the database
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists with this email' });
     }
@@ -38,11 +39,11 @@ router.post('/register', [
       address
     });
 
-    await user.save();
+    await user.save();// save the user to the database
 
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user._id, role: user.role },
+      { userId: user._id, role: user.role }, //create a token with user id and role
       JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -50,7 +51,7 @@ router.post('/register', [
     res.status(201).json({
       message: 'User registered successfully',
       token,
-      user: {
+      user: { // We include the user object in the response so that the frontend can get user data immediately — without making another request.
         id: user._id,
         name: user.name,
         email: user.email,
@@ -102,7 +103,7 @@ router.post('/login', [
       { expiresIn: '7d' }
     );
 
-    res.json({
+    res.json({ //send response to the frontend
       message: 'Login successful',
       token,
       user: {
@@ -123,7 +124,7 @@ router.post('/login', [
 // Get current user
 router.get('/me', authenticateToken, async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select('-password');
+    const user = await User.findById(req.user._id).select('-password');// find the user by id and exclude password from the response
     res.json({ user });
   } catch (error) {
     console.error('Get user error:', error);

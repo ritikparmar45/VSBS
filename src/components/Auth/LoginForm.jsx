@@ -7,32 +7,33 @@ const LoginForm = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  });//this use to store the email and password at the time of login
+  const [showPassword, setShowPassword] = useState(false);//it is false so user cant see the password by default
+  const [error, setError] = useState('');//this use to store the error message if login fails
+  const [loading, setLoading] = useState(false);//this use to show the loading state when the user clicks on login button
 
-  const { login } = useAuth();
-  const navigate = useNavigate();
+  const { login } = useAuth();//those login function we defined in AuthContext.jsx, we are using it here to login the user
+  const navigate = useNavigate();//this use to redirect the user to another page after login
 
   const handleChange = (e) => {
     setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
+      ...formData, //keep the old values
+      [e.target.name]: e.target.value //update the specific field(email or password)
     });
     setError('');
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+  const handleSubmit = async (e) => { // e is the event object that is passed to the function when the form is submitted
+    e.preventDefault();//this stop the default browser behavior of reloading the page on form submission
+    setLoading(true);//this line sets the loading state to true when the user clicks on login button
+    setError('');//this line resets the error message before attempting to login
 
     try {
-      await login(formData.email, formData.password);
-      navigate('/dashboard');
+      await login(formData.email, formData.password); //this line sends the data to backend from usestate
+
+      navigate('/dashboard');//if login is successful, this line redirects to the dashboard
     } catch (err) {
-      setError(err.message);
+      setError(err.message);//if login fails, this line sets the error message
     } finally {
       setLoading(false);
     }

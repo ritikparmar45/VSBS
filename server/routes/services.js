@@ -9,12 +9,12 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const { category, vehicleType } = req.query;
-    const filter = { isActive: true };
+    const filter = { isActive: true }; //only fetch the active services
     
     if (category) filter.category = category;
     if (vehicleType && vehicleType !== 'both') filter.vehicleType = { $in: [vehicleType, 'both'] };
 
-    const services = await Service.find(filter).sort({ createdAt: -1 });
+    const services = await Service.find(filter).sort({ createdAt: -1 }); // sort result by newest first
     res.json({ services });
   } catch (error) {
     console.error('Get services error:', error);
@@ -26,6 +26,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const service = await Service.findById(req.params.id);
+  
     if (!service) {
       return res.status(404).json({ message: 'Service not found' });
     }
@@ -39,7 +40,6 @@ router.get('/:id', async (req, res) => {
 // Create service (Admin only)
 router.post('/', authenticateToken, authorizeRoles('admin'), [
   body('name').trim().isLength({ min: 2 }).withMessage('Service name is required'),
-  body('description').trim().isLength({ min: 10 }).withMessage('Description must be at least 10 characters'),
   body('price').isNumeric().withMessage('Price must be a number'),
   body('duration').isNumeric().withMessage('Duration must be a number'),
 ], async (req, res) => {
@@ -66,9 +66,11 @@ router.post('/', authenticateToken, authorizeRoles('admin'), [
 router.put('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
   try {
     const service = await Service.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
+      req.params.id, //which service to update
+      req.body,//which data to update
+      { new: true,// return the updated document
+     runValidators: true // validate the updated data
+    }
     );
 
     if (!service) {
@@ -77,7 +79,7 @@ router.put('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) 
 
     res.json({
       message: 'Service updated successfully',
-      service
+      service //for frontend to get the updated service data
     });
   } catch (error) {
     console.error('Update service error:', error);

@@ -20,7 +20,7 @@ export const authenticateToken = async (req, res, next) => {
     }
 
     req.user = user;
-    next();
+    next(); // proceed to the next middleware or route handler
   } catch (error) {
     return res.status(403).json({ message: 'Invalid token' });
   }

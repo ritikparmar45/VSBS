@@ -26,7 +26,8 @@ const Navbar = () => {
   return (
     <nav className="bg-white shadow-lg border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <div className="flex justify-between h-16 items-center">
+          {/* Left: Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2">
               <div className="bg-blue-600 p-2 rounded-lg">
@@ -36,9 +37,21 @@ const Navbar = () => {
             </Link>
           </div>
 
+          {/* Center: Navigation Links (only for guests) */}
+          {!user && (
+            <div className="hidden md:flex items-center space-x-6">
+              <Link to="/" className="text-gray-700 hover:text-blue-600 text-sm font-medium">Home</Link>
+              <Link to="/about" className="text-gray-700 hover:text-blue-600 text-sm font-medium">About</Link>
+              <Link to="/contact" className="text-gray-700 hover:text-blue-600 text-sm font-medium">Contact</Link>
+              <Link to="/services" className="text-gray-700 hover:text-blue-600 text-sm font-medium">Our Services</Link>
+            </div>
+          )}
+
+          {/* Right: Auth & User */}
           <div className="flex items-center space-x-4">
             {user ? (
               <>
+                {/* Dashboard */}
                 <Link
                   to={getDashboardLink()}
                   className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
@@ -53,6 +66,16 @@ const Navbar = () => {
                   <span>Dashboard</span>
                 </Link>
 
+                {/* My Profile */}
+                <Link
+                  to="/profile"
+                  className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                >
+                  <User className="h-4 w-4" />
+                  <span>My Profile</span>
+                </Link>
+
+                {/* User Info */}
                 <div className="flex items-center space-x-2 px-3 py-2 rounded-md bg-gray-50">
                   <User className="h-4 w-4 text-gray-600" />
                   <span className="text-sm font-medium text-gray-700">{user.name}</span>
@@ -61,6 +84,7 @@ const Navbar = () => {
                   </span>
                 </div>
 
+                {/* Logout */}
                 <button
                   onClick={handleLogout}
                   className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors"
@@ -70,7 +94,7 @@ const Navbar = () => {
                 </button>
               </>
             ) : (
-              <div className="flex items-center space-x-4">
+              <>
                 <Link
                   to="/login"
                   className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
@@ -83,7 +107,7 @@ const Navbar = () => {
                 >
                   Get Started
                 </Link>
-              </div>
+              </>
             )}
           </div>
         </div>

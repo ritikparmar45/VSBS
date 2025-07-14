@@ -6,6 +6,9 @@ import authRoutes from './routes/auth.js';
 import serviceRoutes from './routes/services.js';
 import bookingRoutes from './routes/bookings.js';
 import userRoutes from './routes/users.js';
+import adminRoutes from './routes/admin.js';
+import editProfileRoute from './routes/editprofile.js';
+import receiptRoutes from './routes/receipts.js'; // Corrected import statement
 
 dotenv.config(); // Load environment variables
 
@@ -20,8 +23,9 @@ app.use(express.json());
 const connectDB = async () => {
   try {
     const mongoURI = process.env.MONGODB_URI;
+  
     await mongoose.connect(mongoURI, {
-      useNewUrlParser: true,
+      useNewUrlParser: true,  //
       useUnifiedTopology: true
     });
     console.log('✅ MongoDB connected successfully');
@@ -31,13 +35,16 @@ const connectDB = async () => {
   }
 };
 
-connectDB();
+connectDB();//call the function to connect to the database
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/edit-profile', editProfileRoute);
+app.use('/api/receipts',receiptRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

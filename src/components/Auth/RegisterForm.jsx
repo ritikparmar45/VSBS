@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, Phone, MapPin, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { User, Mail, Lock, Phone, MapPin, Eye, EyeOff, AlertCircle } from 'lucide-react'; //for icons
 import { useAuth } from '../../contexts/AuthContext';
 
 const RegisterForm = () => {
@@ -30,7 +30,7 @@ const RegisterForm = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); //stops the page from refreshing
     setLoading(true);
     setError('');
 
@@ -47,9 +47,9 @@ const RegisterForm = () => {
     }
 
     try {
-      const { confirmPassword, ...userData } = formData;
-      await register(userData);
-      navigate('/dashboard');
+      const { confirmPassword, ...userData } = formData; //it remove the confirmPassword field from the userData object
+      await register(userData);// Call the register function from AuthContext
+      navigate('/dashboard'); // Redirect to dashboard after successful registration
     } catch (err) {
       setError(err.message);
     } finally {
