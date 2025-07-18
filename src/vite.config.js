@@ -1,10 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-const backendURL = process.env.VITE_API_BASE || 'http://localhost:5000';
+const backendURL = process.env.VITE_API_BASE || 'https://vsbs.onrender.com';
 
 export default defineConfig({
-  root: 'src', // because index.html is now in /src
   plugins: [react()],
   server: {
     port: 3000,
@@ -16,10 +15,10 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: '../dist',  // tells Vite to output dist in root
+    outDir: 'dist',      // Will build into src/dist/
     emptyOutDir: true,
   },
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
-});
+})
