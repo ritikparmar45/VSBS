@@ -1,52 +1,45 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-const AuthContext = createContext();//it is used to create a context object whose name is AuthContext
+const AuthContext = createContext();
 
-// Use relative API URL to work with Vite proxy
-const API_URL = '/api';
+// ✅ Use VITE_API_URL from .env (default to '/api' for proxy support)
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
-// automatically set the Authorization header for all requests
-// this interceptor will add the token to the header of every request made by axios
-// this is useful for authenticated requests
-// so we don't have to manually add the token to every request
-// it will check if the token is present in localStorage and if it is, it will
-// add it to the Authorization header of the request
-// if the token is not present, it will not add the Authorization header
+// 🔐 Automatically add token to all Axios requests
 axios.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');// get the token from localStorage
+  const token = localStorage.getItem('token');
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;// if the token is present, add it to the Authorization header
+    config.headers.Authorization = `Bearer ${token}`;
   }
-  return config;// return the config object so that the request can be made
+  return config;
 });
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);// this use to store the user data after login or registration
-  const [token, setToken] = useState(localStorage.getItem('token'));// this use to store the token after login or registration
-  const [loading, setLoading] = useState(true);// this use to show the loading state while checking if the user is logged in or not
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => { //we use it because whenever user refresh the page or open again the page,so automatically check if the user is logged in or not
+  useEffect(() => {
     const initAuth = async () => {
-      const storedToken = localStorage.getItem('token');//take the token from localStorage
+      const storedToken = localStorage.getItem('token');
       if (storedToken) {
         try {
-          //we take user information from the backend using the token
-          const response = await axios.get(`${API_URL}/auth/me`); // we can use await axios.get('/api/auth/me')
-          setUser(response.data.user);// set the user data in state
-          setToken(storedToken);// set the token in state
+          const response = await axios.get(`${API_URL}/auth/me`);
+          setUser(response.data.user);
+          setToken(storedToken);
         } catch (error) {
           localStorage.removeItem('token');
           setToken(null);
         }
       }
-      setLoading(false);// set loading to false after checking the token
+      setLoading(false);
     };
 
     initAuth();
-  }, []);// [] the meaning of this empty array is that this useEffect will run only once when the component mounts
+  }, []);
 
-  const login = async (email, password) => {// this function is used to make connection between login form and backend
+  const login = async (email, password) => {
     try {
       const response = await axios.post(`${API_URL}/auth/login`, {
         email,
@@ -55,9 +48,8 @@ export const AuthProvider = ({ children }) => {
 
       const { token: newToken, user: userData } = response.data;
       localStorage.setItem('token', newToken);
-      setToken(newToken);// set the token in state
-      setUser(userData);// set the user data in state
-      //this two lines show us user login successfully and we can use this user data in the whole application
+      setToken(newToken);
+      setUser(userData);
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Login failed');
     }
@@ -66,7 +58,6 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       const response = await axios.post(`${API_URL}/auth/register`, userData);
-      
       const { token: newToken, user: newUser } = response.data;
       localStorage.setItem('token', newToken);
       setToken(newToken);
@@ -105,7 +96,3 @@ export const useAuth = () => {
   }
   return context;
 };
-
-
-
-//we used this authcontext to proide login, register, logout and user data to the whole application

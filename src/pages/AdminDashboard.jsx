@@ -1,6 +1,7 @@
-// ✅ AdminDashboard.jsx (with date check for Completion)
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+
+const API_BASE = import.meta.env.VITE_API_URL;
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({ users: 0, bookings: 0, services: 0, bookingsToday: 0 });
@@ -30,9 +31,9 @@ const AdminDashboard = () => {
     fetchBookings();
   }, []);
 
-  const fetchStats = async () => {
+  const Stats = async () => {
     try {
-      const res = await axios.get('/api/admin/stats');
+      const res = await axios.get(`${API_BASE}/api/admin/stats`);
       setStats(res.data);
     } catch {
       showAlert('Failed to fetch dashboard stats', 'error');
@@ -41,7 +42,7 @@ const AdminDashboard = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get('/api/users');
+      const res = await axios.get(`${API_BASE}/api/users`);
       setUsers(res.data.users);
     } catch {
       showAlert('Failed to fetch users', 'error');
@@ -50,7 +51,7 @@ const AdminDashboard = () => {
 
   const fetchServices = async () => {
     try {
-      const res = await axios.get('/api/services');
+      const res = await axios.get(`${API_BASE}/api/services`);
       setServices(res.data.services);
     } catch {
       showAlert('Failed to fetch services', 'error');
@@ -59,7 +60,7 @@ const AdminDashboard = () => {
 
   const fetchBookings = async () => {
     try {
-      const res = await axios.get('/api/bookings');
+      const res = await axios.get(`${API_BASE}/api/bookings`);
       setBookings(res.data.bookings);
     } catch {
       showAlert('Failed to fetch bookings', 'error');
@@ -68,7 +69,7 @@ const AdminDashboard = () => {
 
   const handleBookingStatusChange = async (id, status) => {
     try {
-      await axios.patch(`/api/bookings/${id}/status`, { status });
+      await axios.patch(`${API_BASE}/api/bookings/${id}/status`, { status });
       fetchBookings(); // refresh the list
       showAlert(`Booking marked as ${status}`, 'success');
     } catch (err) {
@@ -112,9 +113,6 @@ const AdminDashboard = () => {
         <div className="bg-white p-6 rounded shadow"><p>Services Offered</p><p className="text-2xl">{stats.services}</p></div>
         <div className="bg-white p-6 rounded shadow"><p>Bookings Today</p><p className="text-2xl">{stats.bookingsToday}</p></div>
       </div>
-
-      {/* Users Table */}
-      {/* ... (unchanged code for managing users and services) ... */}
 
       {/* Booking Management */}
       <div className="mt-10">

@@ -21,7 +21,7 @@ const ProfileDashboard = () => {
     e.preventDefault();
     try {
       await axios.put(
-        '/api/edit-profile',
+        `${import.meta.env.VITE_API_URL}/api/edit-profile`,
         { ...form },
         {
           headers: {
